@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "bloggy_backend": {
+      "main": "src/bloggy_backend/main.mo",
+      "type": "motoko"
+    },
+    "bloggy_frontend": {
+      "dependencies": [
+        "bloggy_backend"
+      ],
+      "source": [
+        "src/bloggy_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "bloggy_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
