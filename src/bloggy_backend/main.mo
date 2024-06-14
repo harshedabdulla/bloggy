@@ -2,6 +2,8 @@ import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
 import Array "mo:base/Array";
+import Bool "mo:base/Bool";
+import Principal "mo:base/Principal";
 
 actor bloggy {
   type Post = {
@@ -11,7 +13,7 @@ actor bloggy {
     upvotes: Nat;
     downvotes: Nat;
     author: Principal;
-
+    isPublic: Bool;
   };
   type Result<A,B> = Result.Result<A,B>;
 
@@ -23,6 +25,9 @@ actor bloggy {
     if (title == "" or description == "") {
       return #err("Title and description must not be empty");
     };
+    if (Principal.isAnonymous(caller)) {
+      return #err("Anonymous users are not allowed to create posts");
+    };
     let post: Post = {
       id = nextId;
       title = title;
@@ -30,6 +35,7 @@ actor bloggy {
       upvotes = 0;
       downvotes = 0;
       author = caller;
+      isPublic = false;  
     };
     posts := Array.append(posts, [post]);
     nextId += 1;
@@ -45,5 +51,4 @@ actor bloggy {
   public shared func deletePosts() {
     posts := [];
   };
-
 };
