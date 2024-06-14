@@ -11,6 +11,7 @@ actor bloggy {
     upvotes: Nat;
     downvotes: Nat;
     author: Principal;
+
   };
   type Result<A,B> = Result.Result<A,B>;
 
@@ -44,6 +45,5 @@ actor bloggy {
   public shared func deletePosts() {
     posts := [];
   };
-
 
 };
