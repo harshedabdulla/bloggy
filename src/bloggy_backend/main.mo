@@ -25,6 +25,9 @@ actor bloggy {
     if (title == "" or description == "") {
       return #err("Title and description must not be empty");
     };
+    if (Text.size(title) > 125) {
+      return #err("Title must be less than 100 characters");
+    };
     if (Principal.isAnonymous(caller)) {
       return #err("Anonymous users are not allowed to create posts");
     };
