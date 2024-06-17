@@ -69,7 +69,7 @@ const NewPost = () => {
                   <Form.Control
                     as="textarea"
                     name="description"
-                    rows={10}
+                    rows={12}
                     value={values.description}
                     onChange={handleChange}
                     isValid={touched.description && !errors.description}
@@ -86,7 +86,10 @@ const NewPost = () => {
                   </Alert>
                 )}
 
-                <Button type="submit" className="mt-3">
+                <Button
+                  type="submit"
+                  className="mt-3 border-black bg-white text-black"
+                >
                   Add Post
                 </Button>
               </Form>

@@ -7,7 +7,8 @@ export const postInitialValues = {
 
 export const postValidationSchema = Yup.object({
   title: Yup.string()
+    .trim()
     .max(125, 'Title must be at most 125 characters')
     .required('Title is required'),
-  description: Yup.string().required('Description is required'),
+  description: Yup.string().trim().required('Description is required'),
 })

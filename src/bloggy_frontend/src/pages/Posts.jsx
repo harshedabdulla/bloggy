@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Row, Col, Card } from 'react-bootstrap'
+import { Container, Row, Col, Card, Button } from 'react-bootstrap'
 import { bloggy_backend } from '../../../declarations/bloggy_backend'
 import { Link } from 'react-router-dom'
 
@@ -26,27 +26,37 @@ const Posts = () => {
 
   return (
     <Container>
-      <div className="flex">
-        <h2 className="text-center my-4">Posts</h2>
-        <Link to="/post/new" className="btn border-black mb-4 w-fit">
-          +
+      <div className="d-flex justify-content-between align-items-center my-4">
+        <h2 className="text-center">Posts</h2>
+        <Link to="/post/new" className="btn border-black">
+          + New Post
         </Link>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <div className="text-center mt-5">Loading...</div>
       ) : error ? (
-        <div className="text-danger">{error}</div>
+        <div className="text-danger text-center mt-5">{error}</div>
       ) : (
-        <Row>
+        <Row xs={1} md={2} lg={3} className="g-4">
           {posts.map((post, index) => (
-            <Col key={index} md={4} className="mb-4">
+            <Col key={index}>
               <Card>
                 <Card.Body>
                   <Card.Title>{post.title}</Card.Title>
                   <Card.Text>{post.description}</Card.Text>
-                  <div>
-                    <span>👍: {post.upvotes}</span>
-                    <span className="ml-4">👎: {post.downvotes}</span>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span role="img" aria-label="upvote">
+                        👍
+                      </span>
+                      {post.upvotes}
+                    </div>
+                    {/* <div>
+                      <span role="img" aria-label="downvote">
+                        👎
+                      </span>
+                      {post.downvotes}
+                    </div> */}
                   </div>
                 </Card.Body>
               </Card>
