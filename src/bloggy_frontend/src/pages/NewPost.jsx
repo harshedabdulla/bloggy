@@ -1,14 +1,18 @@
 import React from 'react'
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap'
 import { Formik } from 'formik'
-import * as Yup from 'yup'
 import { useToast } from '../hooks/useToast'
 import { bloggy_backend } from '../../../declarations/bloggy_backend'
 import { useNavigate } from 'react-router-dom'
+import {
+  postInitialValues,
+  postValidationSchema,
+} from '../constants/formConstants'
 
 const NewPost = () => {
   const { showToast } = useToast()
   const navigate = useNavigate()
+
   const addPost = async (values, { setSubmitting, setErrors, resetForm }) => {
     try {
       const { title, description } = values
@@ -39,11 +43,8 @@ const NewPost = () => {
       <Row className="justify-content-center my-4">
         <Col md={6}>
           <Formik
-            initialValues={{ title: '', description: '' }}
-            validationSchema={Yup.object({
-              title: Yup.string().required('Title is required'),
-              description: Yup.string().required('Description is required'),
-            })}
+            initialValues={postInitialValues}
+            validationSchema={postValidationSchema}
             onSubmit={addPost}
           >
             {({ handleSubmit, handleChange, values, touched, errors }) => (
@@ -68,6 +69,7 @@ const NewPost = () => {
                   <Form.Control
                     as="textarea"
                     name="description"
+                    rows={10}
                     value={values.description}
                     onChange={handleChange}
                     isValid={touched.description && !errors.description}
