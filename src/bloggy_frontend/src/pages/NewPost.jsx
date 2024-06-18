@@ -1,22 +1,35 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap'
 import { Formik } from 'formik'
 import { useToast } from '../hooks/useToast'
 import { bloggy_backend } from '../../../declarations/bloggy_backend'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import {
   postInitialValues,
   postValidationSchema,
 } from '../constants/formConstants'
+import { Principal } from '@dfinity/principal'
 
 const NewPost = () => {
   const { showToast } = useToast()
   const navigate = useNavigate()
+  const { artemisAdapter } = useAuth()
 
   const addPost = async (values, { setSubmitting, setErrors, resetForm }) => {
     try {
       const { title, description } = values
-      const result = await bloggy_backend.createPost(title, description)
+      if (!artemisAdapter) {
+        throw new Error('Artemis wallet is not connected')
+      }
+      const principalId = artemisAdapter.principalId
+      const principal = Principal.fromText(principalId)
+      console.log('principal:', principal)
+      const result = await bloggy_backend.createPost(
+        title,
+        description,
+        principal
+      )
       console.log('Result from createPost:', result)
       if (result.hasOwnProperty('ok')) {
         showToast('Post added successfully!', 'success')

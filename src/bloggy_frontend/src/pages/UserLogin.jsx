@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Artemis } from 'artemis-web3-adapter'
 import {
   Container,
   Row,
@@ -10,45 +9,22 @@ import {
   Spinner,
   Alert,
 } from 'react-bootstrap'
+import { useAuth } from '../context/AuthContext'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { bloggy_backend } from '../../../declarations/bloggy_backend'
 
 const UserLogin = () => {
-  const [artemisAdapter, setArtemisAdapter] = useState(null)
-  const [isConnected, setIsConnected] = useState(false)
-  const [isConnecting, setIsConnecting] = useState(false)
-  const [error, setError] = useState(null)
+  const { artemisAdapter, isConnected, isConnecting, error, connectWallet } =
+    useAuth()
   const navigate = useNavigate()
-
-  const connectWallet = async () => {
-    setIsConnecting(true)
-    setError(null)
-    try {
-      const artemisWalletAdapter = new Artemis()
-      await artemisWalletAdapter.connect('plug')
-      console.log('Artemis wallet connected:', artemisWalletAdapter)
-      setArtemisAdapter(artemisWalletAdapter)
-      setIsConnected(true)
-      const principalId = artemisWalletAdapter.principalId
-      console.log('Principal ID:', principalId)
-      const sendID = await bloggy_backend.receivePrincipalId(principalId)
-      console.log('sendID:', sendID)
-      navigate('/posts')
-    } catch (error) {
-      console.error('Error connecting Artemis wallet:', error)
-      setError('Failed to connect to the wallet. Please try again.')
-    } finally {
-      setIsConnecting(false)
-    }
-  }
-
-  // useEffect(() => {
-  //   const artemisWalletAdapter = new Artemis()
-  //   setArtemisAdapter(artemisWalletAdapter)
-  // }, [])
 
   // State to manage the animation of typing "bloggy"
   const [typedText, setTypedText] = useState('')
+
+  useEffect(() => {
+    if (isConnected) {
+      navigate('/posts')
+    }
+  }, [isConnected, navigate])
 
   useEffect(() => {
     const textToType = 'bloggy_'
