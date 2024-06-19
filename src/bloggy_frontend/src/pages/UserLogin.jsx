@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Container,
@@ -10,18 +10,23 @@ import {
   Alert,
 } from 'react-bootstrap'
 import { useAuth } from '../context/AuthContext'
+import { useMutation } from '@tanstack/react-query'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/typewriter.css'
+
 const UserLogin = () => {
-  const { artemisAdapter, isConnected, isConnecting, error, connectWallet } =
-    useAuth()
+  const { artemisAdapter, connectWallet } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (isConnected) {
+  const mutation = useMutation({
+    mutationFn: connectWallet,
+    onSuccess: () => {
       navigate('/posts')
-    }
-  }, [isConnected, navigate])
+    },
+    onError: (error) => {
+      console.error('Error connecting wallet:', error)
+    },
+  })
 
   return (
     <>
@@ -40,20 +45,23 @@ const UserLogin = () => {
                 <Card.Text className="mb-4">
                   Connect your plug wallet to start creating and viewing posts.
                 </Card.Text>
-                {error && <Alert variant="danger">{error}</Alert>}
-                {!isConnected ? (
+                {mutation.isError && (
+                  <Alert variant="danger">{mutation.error.message}</Alert>
+                )}
+                {!mutation.isSuccess && (
                   <Button
                     variant="primary"
-                    onClick={connectWallet}
-                    disabled={isConnecting}
+                    onClick={() => mutation.mutate()}
+                    disabled={mutation.isLoading}
                   >
-                    {isConnecting ? (
+                    {mutation.isLoading ? (
                       <Spinner animation="border" size="sm" />
                     ) : (
                       'Connect'
                     )}
                   </Button>
-                ) : (
+                )}
+                {mutation.isSuccess && (
                   <Button variant="success" disabled>
                     Connected
                   </Button>

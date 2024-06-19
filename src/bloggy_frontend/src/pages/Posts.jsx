@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Container, Row, Col, Card, Button } from 'react-bootstrap'
+import { useQuery } from '@tanstack/react-query'
 import { bloggy_backend } from '../../../declarations/bloggy_backend'
 import { Link } from 'react-router-dom'
 
+const fetchPosts = async () => {
+  const posts = await bloggy_backend.viewPosts()
+  return posts
+}
+
 const Posts = () => {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const fetchedPosts = await bloggy_backend.viewPosts()
-        setPosts(fetchedPosts)
-      } catch (err) {
-        console.error('Error fetching posts:', err)
-        setError('Failed to fetch posts.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPosts()
-  }, [])
+  const {
+    data: posts,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  })
 
   return (
     <Container>
@@ -32,10 +27,12 @@ const Posts = () => {
           + New Post
         </Link>
       </div>
-      {loading ? (
+      {isLoading ? (
         <div className="text-center mt-5">Loading...</div>
       ) : error ? (
-        <div className="text-danger text-center mt-5">{error}</div>
+        <div className="text-danger text-center mt-5">
+          {error.message || 'Failed to fetch posts.'}
+        </div>
       ) : (
         <Row xs={1} md={2} lg={3} className="g-4">
           {posts.map((post, index) => (
