@@ -21,13 +21,6 @@ actor bloggy {
   stable var postsStable: [Type.Post] = [];
   stable var nextIdStable: Nat = 0;
 
-  // var userPrincipal: Principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-
-  // public func receivePrincipalId(receiverPrincipalId: Text) : async () {
-  //   userPrincipal := Principal.fromText(receiverPrincipalId);
-  //   Debug.print("Received Principal ID: " # debug_show(userPrincipal));
-  // };
-
   /// function to create new post 
   public func createPost(title: Text, description: Text, principal: Principal): async Result.Result<(), Text> {
     switch(Validate.validatePost(title, description)) {
