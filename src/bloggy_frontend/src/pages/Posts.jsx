@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Button } from 'react-bootstrap'
 import { useQuery } from '@tanstack/react-query'
 import { bloggy_backend } from '../../../declarations/bloggy_backend'
 import { Link } from 'react-router-dom'
-
+import { useAuth } from '../context/AuthContext'
 const fetchPosts = async () => {
   const posts = await bloggy_backend.viewPosts()
   return posts
@@ -18,14 +18,22 @@ const Posts = () => {
     queryKey: ['posts'],
     queryFn: fetchPosts,
   })
+  const { logOut } = useAuth()
 
   return (
     <Container>
       <div className="d-flex justify-content-between align-items-center my-4">
-        <h2 className="text-center">Posts</h2>
-        <Link to="/post/new" className="btn border-black">
+        <div>
+          <h2 className="text-center">Posts</h2>
+        </div>
+
+        <Link to="/post/new" className="btn border-black mr-2">
           + New Post
         </Link>
+        <Button variant="outline-danger" onClick={logOut}>
+          {' '}
+          Log Out{' '}
+        </Button>
       </div>
       {isLoading ? (
         <div className="text-center mt-5">Loading...</div>

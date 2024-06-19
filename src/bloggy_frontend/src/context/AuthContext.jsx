@@ -26,11 +26,11 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // // log out function
-  // const logOut = () => {
-  //   setArtemisAdapter(null)
-  //   setIsConnected(false)
-  // }
+  // log out function
+  const logOut = () => {
+    setArtemisAdapter(null)
+    setIsConnected(false)
+  }
 
   return (
     <AuthContext.Provider
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
         isConnected,
         isConnecting,
         error,
-        // logOut,
+        logOut,
         connectWallet,
       }}
     >
