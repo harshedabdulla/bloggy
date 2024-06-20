@@ -5,58 +5,47 @@ import Bool "mo:base/Bool";
 import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
 import Debug "mo:base/Debug";
+import Type "types";
+import validatePost "validate";
+import Validate "validate";
+
 
 actor bloggy {
-  type Post = {
-    id: Nat;
-    title: Text;
-    description: Text;
-    upvotes: Nat;
-    downvotes: Nat;
-    author: Principal;
-    isPublic: Bool;
-  };
+  
   
   type Result<A, B> = Result.Result<A, B>;
 
-  var posts = Buffer.Buffer<Post>(1);
+  var posts = Buffer.Buffer<Type.Post>(1);
   var nextId: Nat = 0;
 
-  stable var postsStable: [Post] = [];
+  stable var postsStable: [Type.Post] = [];
   stable var nextIdStable: Nat = 0;
 
-  var userPrincipal: Principal = Principal.fromText("un4fu-tqaaa-aaaab-qadjq-cai");
-
-  public func receivePrincipalId(receiverPrincipalId: Text) : async () {
-    userPrincipal := Principal.fromText(receiverPrincipalId);
-    Debug.print("Received Principal ID: " # debug_show(userPrincipal));
-  };
-
   /// function to create new post 
-  public func createPost(title: Text, description: Text): async Result<(), Text> {
-    Debug.print("Stored userPrincipal: " # debug_show(userPrincipal));
-    if (title == "" or description == "") {
-      return #err("Title and description must not be empty");
+  public func createPost(title: Text, description: Text, principal: Principal): async Result.Result<(), Text> {
+    switch(Validate.validatePost(title, description)) {
+      case (#err(error)){
+        return #err(error);
+      };
+      case (#ok()){
+      };
     };
-    if (Text.size(title) > 125) {
-      return #err("Title must be less than 125 characters");
-    };
-      let newPost: Post = {
+      let newPost: Type.Post = {
         id = nextId;
         title = title;
         description = description;
         upvotes = 0;
         downvotes = 0;
-        author = userPrincipal;
+        author = principal;
         isPublic = false;
       };
       posts.add(newPost);
-      nextId += 1; // Increment after using the current ID
+      nextId += 1; 
       return #ok(());
   };
 
   /// function to view all posts
-  public query func viewPosts(): async [Post] {
+  public query func viewPosts(): async [Type.Post] {
     return Buffer.toArray(posts);
   };
 
@@ -73,9 +62,8 @@ actor bloggy {
 
   /// post-upgrade function
   system func postupgrade() {
-    posts := Buffer.Buffer<Post>(postsStable.size());
+    posts := Buffer.Buffer<Type.Post>(postsStable.size());
     for (post in postsStable.vals()) {
-      
       posts.add(post);
     };
     nextId := nextIdStable;
