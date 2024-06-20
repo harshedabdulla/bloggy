@@ -1,11 +1,13 @@
 import React from 'react'
-import { Container, Row, Col, Card, Button } from 'react-bootstrap'
+import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap'
 import { useQuery } from '@tanstack/react-query'
 import { bloggy_backend } from '../../../declarations/bloggy_backend'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { QUERY_KEYS } from '../constants/queryKeys'
+
 const fetchPosts = async () => {
-  const posts = await bloggy_backend.viewPosts()
+  const posts = bloggy_backend.viewPosts()
   return posts
 }
 
@@ -15,7 +17,7 @@ const Posts = () => {
     error,
     isLoading,
   } = useQuery({
-    queryKey: ['posts'],
+    queryKey: [QUERY_KEYS.POSTS],
     queryFn: fetchPosts,
   })
   const { logOut } = useAuth()
@@ -27,20 +29,21 @@ const Posts = () => {
           <h2 className="text-center">Posts</h2>
         </div>
 
-        <Link to="/post/new" className="btn border-black mr-2">
+        <Link to="/post/new" className="btn border-black me-2">
           + New Post
         </Link>
-        <Button variant="outline-danger" onClick={logOut}>
-          {' '}
-          Log Out{' '}
+        <Button variant="outline-danger" onClick={logOut} className="px-2">
+          Log Out
         </Button>
       </div>
       {isLoading ? (
-        <div className="text-center mt-5">Loading...</div>
-      ) : error ? (
-        <div className="text-danger text-center mt-5">
-          {error.message || 'Failed to fetch posts.'}
+        <div className="text-center mt-5">
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
         </div>
+      ) : error ? (
+        <div className="text-danger text-center mt-5">{error.message}</div>
       ) : (
         <Row xs={1} md={2} lg={3} className="g-4">
           {posts.map((post, index) => (
@@ -56,12 +59,6 @@ const Posts = () => {
                       </span>
                       {post.upvotes}
                     </div>
-                    {/* <div>
-                      <span role="img" aria-label="downvote">
-                        👎
-                      </span>
-                      {post.downvotes}
-                    </div> */}
                   </div>
                 </Card.Body>
               </Card>

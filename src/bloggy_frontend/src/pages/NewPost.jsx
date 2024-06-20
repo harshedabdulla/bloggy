@@ -1,57 +1,14 @@
 import React from 'react'
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap'
 import { Formik } from 'formik'
-import { useToast } from '../hooks/useToast'
-import { bloggy_backend } from '../../../declarations/bloggy_backend'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import {
   postInitialValues,
   postValidationSchema,
 } from '../constants/formConstants'
-import { Principal } from '@dfinity/principal'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCreatePost } from '../hooks/useCreatePost'
 
 const NewPost = () => {
-  const { showToast } = useToast()
-  const navigate = useNavigate()
-  const { artemisAdapter } = useAuth()
-  const queryClient = useQueryClient()
-
-  const addPost = async (values) => {
-    const { title, description } = values
-    if (!artemisAdapter) {
-      throw new Error('Artemis wallet is not connected')
-    }
-    const principalId = artemisAdapter.principalId
-    const principal = Principal.fromText(principalId)
-    const result = await bloggy_backend.createPost(
-      title,
-      description,
-      principal
-    )
-    return result
-  }
-
-  const mutation = useMutation({
-    mutationFn: addPost,
-    onSuccess: (result) => {
-      if (result.hasOwnProperty('ok')) {
-        showToast('Post added successfully!', 'success')
-        queryClient.invalidateQueries('posts')
-        console.log('Post added ', result)
-        navigate('/posts', { replace: true })
-      } else if (result.hasOwnProperty('err')) {
-        throw new Error(result.err)
-      }
-    },
-    onError: (error) => {
-      showToast(
-        error.message || 'An error occurred while creating the post.',
-        'error'
-      )
-    },
-  })
+  const mutation = useCreatePost()
 
   return (
     <Container>

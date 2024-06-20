@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   const logOut = () => {
     setArtemisAdapter(null)
     setIsConnected(false)
+    localStorage.removeItem('artemisWallet')
   }
 
   return (

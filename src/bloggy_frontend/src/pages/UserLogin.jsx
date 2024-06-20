@@ -1,5 +1,4 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   Container,
   Row,
@@ -9,24 +8,12 @@ import {
   Spinner,
   Alert,
 } from 'react-bootstrap'
-import { useAuth } from '../context/AuthContext'
-import { useMutation } from '@tanstack/react-query'
+import { useConnectWallet } from '../hooks/useConnectWallet'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/typewriter.css'
 
 const UserLogin = () => {
-  const { artemisAdapter, connectWallet } = useAuth()
-  const navigate = useNavigate()
-
-  const mutation = useMutation({
-    mutationFn: connectWallet,
-    onSuccess: () => {
-      navigate('/posts')
-    },
-    onError: (error) => {
-      console.error('Error connecting wallet:', error)
-    },
-  })
+  const mutation = useConnectWallet()
 
   return (
     <>
@@ -46,7 +33,10 @@ const UserLogin = () => {
                   Connect your plug wallet to start creating and viewing posts.
                 </Card.Text>
                 {mutation.isError && (
-                  <Alert variant="danger">{mutation.error.message}</Alert>
+                  <Alert variant="danger">
+                    {mutation.error.message ||
+                      'Failed to connect to the wallet. Please try again.'}
+                  </Alert>
                 )}
                 {!mutation.isSuccess && (
                   <Button
