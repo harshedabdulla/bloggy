@@ -4,7 +4,7 @@ import NewPost from './pages/NewPost'
 import Posts from './pages/Posts'
 import UserLogin from './pages/UserLogin'
 import ProtectedRoute from './components/ProtectedRoute'
-import Query from './pages/Query'
+
 function App() {
   return (
     <BrowserRouter>
@@ -27,7 +27,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/query" element={<Query />} />
       </Routes>
     </BrowserRouter>
   )
