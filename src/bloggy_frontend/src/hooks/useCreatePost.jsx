@@ -4,6 +4,7 @@ import { Principal } from '@dfinity/principal'
 import { useToast } from './useToast'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { checkResult } from '../utils/checkResult'
 
 const addPost = async (values, artemisAdapter) => {
   const { title, description } = values
@@ -12,7 +13,7 @@ const addPost = async (values, artemisAdapter) => {
   }
   const principalId = artemisAdapter.principalId
   const principal = Principal.fromText(principalId)
-  const result = await bloggy_backend.createPost(title, description, principal)
+  const result = bloggy_backend.createPost(title, description, principal)
   return result
 }
 
@@ -25,19 +26,17 @@ export const useCreatePost = () => {
   return useMutation({
     mutationFn: (values) => addPost(values, artemisAdapter),
     onSuccess: (result) => {
-      if (result.hasOwnProperty('ok')) {
+      const { success, error } = checkResult(result)
+      if (success) {
         showToast('Post added successfully!', 'success')
         queryClient.invalidateQueries('posts')
         navigate('/posts', { replace: true })
-      } else if (result.hasOwnProperty('err')) {
-        throw new Error(result.err)
+      } else {
+        throw new Error(error)
       }
     },
     onError: (error) => {
-      showToast(
-        error.message || 'An error occurred while creating the post.',
-        'error'
-      )
+      showToast(error.message, 'error')
     },
   })
 }

@@ -74,7 +74,7 @@ const NewPost = () => {
                 <Button
                   type="submit"
                   className="mt-3 border-black bg-white text-black"
-                  disabled={mutation.isLoading}
+                  disabled={mutation.isPending}
                 >
                   Add Post
                 </Button>
