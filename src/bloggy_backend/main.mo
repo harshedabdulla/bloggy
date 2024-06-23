@@ -1,18 +1,14 @@
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
-import Bool "mo:base/Bool";
 import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
-import Debug "mo:base/Debug";
 import Type "types";
-import validatePost "validate";
 import Validate "validate";
 
 
 actor bloggy {
-  
-  
+    
   type Result<A, B> = Result.Result<A, B>;
 
   var posts = Buffer.Buffer<Type.Post>(1);

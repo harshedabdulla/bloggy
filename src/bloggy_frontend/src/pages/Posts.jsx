@@ -31,8 +31,8 @@ const Posts = () => {
         <div className="text-danger text-center mt-5">{error.message}</div>
       ) : (
         <Row xs={1} md={2} lg={3} className="g-4">
-          {posts.map((post, index) => (
-            <Col key={index}>
+          {posts.map((post) => (
+            <Col key={post.id}>
               <PostCard post={post} />
             </Col>
           ))}

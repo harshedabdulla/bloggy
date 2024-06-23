@@ -13,7 +13,7 @@ const addPost = async (values, artemisAdapter) => {
   }
   const principalId = artemisAdapter.principalId
   const principal = Principal.fromText(principalId)
-  const result = bloggy_backend.createPost(title, description, principal)
+  const result = await bloggy_backend.createPost(title, description, principal)
   return result
 }
 
@@ -27,13 +27,13 @@ export const useCreatePost = () => {
     mutationFn: (values) => addPost(values, artemisAdapter),
     onSuccess: (result) => {
       const { success, error } = checkResult(result)
-      if (success) {
-        showToast('Post added successfully!', 'success')
-        queryClient.invalidateQueries('posts')
-        navigate('/posts', { replace: true })
-      } else {
+      if (!success) {
         throw new Error(error)
       }
+
+      showToast('Post added successfully!', 'success')
+      queryClient.invalidateQueries('posts')
+      navigate('/posts', { replace: true })
     },
     onError: (error) => {
       showToast(error.message, 'error')
