@@ -1,10 +1,6 @@
 export const checkResult = (result) => {
-  if (!result.hasOwnProperty('ok')) {
-    if (result.hasOwnProperty('err')) {
-      return { success: false, error: result.err }
-    }
-    throw new Error('Unexpected result format')
+  if (result.hasOwnProperty('err')) {
+    return { success: false, error: result.err };
   }
-
-  return { success: true, data: result.ok }
-}
+  return { success: true, data: result.ok };
+};

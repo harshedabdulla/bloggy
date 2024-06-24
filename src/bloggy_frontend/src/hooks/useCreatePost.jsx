@@ -13,7 +13,7 @@ const addPost = async (values, artemisAdapter) => {
   }
   const principalId = artemisAdapter.principalId
   const principal = Principal.fromText(principalId)
-  const result = await bloggy_backend.createPost(title, description, principal)
+  const result = bloggy_backend.createPost(title, description, principal)
   return result
 }
 
