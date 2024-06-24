@@ -30,7 +30,7 @@ const Posts = () => {
       ) : error ? (
         <div className="text-danger text-center mt-5">{error.message}</div>
       ) : (
-        <Row xs={1} md={2} lg={3} className="g-4">
+        <Row xs={1} md={1} lg={1} className="g-4">
           {posts.map((post) => (
             <Col key={post.id}>
               <PostCard post={post} />

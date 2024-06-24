@@ -3,6 +3,7 @@ import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import NewPost from './pages/NewPost'
 import Posts from './pages/Posts'
 import UserLogin from './pages/UserLogin'
+import PostDetail from './pages/PostDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -27,6 +28,12 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/post/:id" 
+          element={
+          <ProtectedRoute>
+            <PostDetail />
+          </ProtectedRoute>
+          } />
       </Routes>
     </BrowserRouter>
   )

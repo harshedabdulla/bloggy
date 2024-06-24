@@ -45,6 +45,17 @@ actor bloggy {
     return Buffer.toArray(posts);
   };
 
+  /// Function to view a single post by id
+  public query func viewPost(id: Nat): async Result<Type.Post, Text> {
+    for (post in Buffer.toArray(posts).vals()) {
+      if (post.id == id) {
+        return #ok(post);
+      };
+    };
+    return #err("Post not found");
+  };
+  
+
   /// function to delete all posts
   public shared func deletePosts() {
     posts.clear();
