@@ -9,22 +9,33 @@ export const AuthProvider = ({ children }) => {
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState(null)
 
-  const connectWallet = async () => {
-    setIsConnecting(true)
-    setError(null)
-    try {
-      const artemisWalletAdapter = new Artemis()
-      await artemisWalletAdapter.connect('plug')
-      console.log('Artemis wallet connected:', artemisWalletAdapter)
-      setArtemisAdapter(artemisWalletAdapter)
-      setIsConnected(true)
-    } catch (error) {
-      console.error('Error connecting Artemis wallet:', error)
-      setError('Failed to connect to the wallet. Please try again.')
-    } finally {
-      setIsConnecting(false)
+const connectWallet = async () => {
+  setIsConnecting(true);
+  setError(null);
+  try {
+    if (typeof window.ic === 'undefined' || typeof window.ic.plug === 'undefined') {
+      setError('Plug Wallet is not installed. Please install the Plug Wallet extension.');
+      setIsConnecting(false);
+      return;
     }
+
+    const artemisWalletAdapter = new Artemis();
+    await artemisWalletAdapter.connect('plug');
+    console.log('Artemis wallet connected:', artemisWalletAdapter);
+    setArtemisAdapter(artemisWalletAdapter);
+    setIsConnected(true);
+    const principalId = artemisWalletAdapter.principalId;
+    console.log('Principal ID:', principalId);
+    const sendID = await bloggy_backend.receivePrincipalId(principalId);
+    console.log('sendID:', sendID);
+    navigate('/posts');
+  } catch (error) {
+    console.error('Error connecting Artemis wallet:', error);
+    setError('Failed to connect to the wallet. Please try again.');
+  } finally {
+    setIsConnecting(false);
   }
+};
 
   // log out function
   const logOut = () => {

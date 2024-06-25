@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Container,
   Row,
@@ -14,12 +14,22 @@ import '../styles/typewriter.css'
 
 const UserLogin = () => {
   const mutation = useConnectWallet()
+  const [isPlugInstalled, setIsPlugInstalled] = useState(false)
+
+  useEffect(() => {
+    const checkPlugInstalled = async () => {
+      const isInstalled = await window.ic?.plug?.isConnected()
+      setIsPlugInstalled(isInstalled)
+    }
+
+    checkPlugInstalled()
+  }, [])
 
   return (
     <>
       <Container
         className="d-flex align-items-center justify-content-center"
-        style={{ height: '100vh' }}
+        style={{ height: '100vh', background: 'url(/path/to/your/background.jpg) no-repeat center center / cover' }}
       >
         <Row>
           <Col>
@@ -30,31 +40,41 @@ const UserLogin = () => {
               <Card.Body>
                 <Card.Title className="mb-4">Connect to your wallet</Card.Title>
                 <Card.Text className="mb-4">
-                  Connect your plug wallet to start creating and viewing posts.
+                  Connect your Plug wallet to start creating and viewing posts.
                 </Card.Text>
-                {mutation.isError && (
-                  <Alert variant="danger">
-                    {mutation.error.message ||
-                      'Failed to connect to the wallet. Please try again.'}
+                {!isPlugInstalled ? (
+                  <Alert variant="warning">
+                    Plug wallet is not installed. Please install it from{' '}
+                    <a href="https://plugwallet.ooo/" target="_blank" rel="noopener noreferrer">
+                      here
+                    </a>
+                    .
                   </Alert>
-                )}
-                {!mutation.isSuccess && (
-                  <Button
-                    variant="primary"
-                    onClick={() => mutation.mutate()}
-                    disabled={mutation.isLoading}
-                  >
-                    {mutation.isLoading ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      'Connect'
+                ) : (
+                  <>
+                    {mutation.isError && (
+                      <Alert variant="danger">
+                        {mutation.error.message || 'Failed to connect to the wallet. Please try again.'}
+                      </Alert>
                     )}
-                  </Button>
-                )}
-                {mutation.isSuccess && (
-                  <Button variant="success" disabled>
-                    Connected
-                  </Button>
+                    {!mutation.isSuccess ? (
+                      <Button
+                        variant="primary"
+                        onClick={() => mutation.mutate()}
+                        disabled={mutation.isLoading}
+                      >
+                        {mutation.isLoading ? (
+                          <Spinner animation="border" size="sm" />
+                        ) : (
+                          'Connect'
+                        )}
+                      </Button>
+                    ) : (
+                      <Button variant="success" disabled>
+                        Connected
+                      </Button>
+                    )}
+                  </>
                 )}
               </Card.Body>
             </Card>

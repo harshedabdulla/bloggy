@@ -8,7 +8,7 @@ const PostDetail = () => {
   const { id } = useParams();
   const postId = Number(id);
 
-  const { data: post, error, isLoading } = useFetchPostById(postId);
+  const { data: post, error, isLoading, isFetching } = useFetchPostById(postId);
 
   if (isLoading) {
     return (
@@ -24,6 +24,11 @@ const PostDetail = () => {
 
   return (
     <Container className="my-5">
+      {isFetching && (
+        <div className="text-center mb-4">
+          <Spinner animation="border" role="status"></Spinner>
+        </div>
+      )}
       <Row>
         <Col md={{ span: 8, offset: 2 }}>
           <h1 className="mb-4">{post.title}</h1>

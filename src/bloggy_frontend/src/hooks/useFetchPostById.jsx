@@ -13,7 +13,7 @@ const fetchPostById = async (id) => {
 
 export const useFetchPostById = (id) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.POST, id],
+    queryKey: [QUERY_KEYS.POSTS, id],
     queryFn: () => fetchPostById(id),
   });
 };
