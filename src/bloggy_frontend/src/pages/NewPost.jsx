@@ -1,54 +1,14 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap'
 import { Formik } from 'formik'
-import { useToast } from '../hooks/useToast'
-import { bloggy_backend } from '../../../declarations/bloggy_backend'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import {
   postInitialValues,
   postValidationSchema,
 } from '../constants/formConstants'
-import { Principal } from '@dfinity/principal'
+import { useCreatePost } from '../hooks/useCreatePost'
 
 const NewPost = () => {
-  const { showToast } = useToast()
-  const navigate = useNavigate()
-  const { artemisAdapter } = useAuth()
-
-  const addPost = async (values, { setSubmitting, setErrors, resetForm }) => {
-    try {
-      const { title, description } = values
-      if (!artemisAdapter) {
-        throw new Error('Artemis wallet is not connected')
-      }
-      const principalId = artemisAdapter.principalId
-      const principal = Principal.fromText(principalId)
-      console.log('principal:', principal)
-      const result = await bloggy_backend.createPost(
-        title,
-        description,
-        principal
-      )
-      console.log('Result from createPost:', result)
-      if (result.hasOwnProperty('ok')) {
-        showToast('Post added successfully!', 'success')
-        resetForm()
-        setTimeout(() => {
-          navigate('/posts')
-        }, 2000)
-      } else if (result.hasOwnProperty('err')) {
-        setErrors({ general: result.err })
-        showToast(result.err, 'error')
-      }
-    } catch (error) {
-      console.error('Error creating post:', error)
-      setErrors({ general: 'An error occurred while creating the post.' })
-      showToast('An error occurred while creating the post.', 'error')
-    } finally {
-      setSubmitting(false)
-    }
-  }
+  const mutation = useCreatePost()
 
   return (
     <Container>
@@ -58,7 +18,19 @@ const NewPost = () => {
           <Formik
             initialValues={postInitialValues}
             validationSchema={postValidationSchema}
-            onSubmit={addPost}
+            onSubmit={(values, { setSubmitting, setErrors, resetForm }) => {
+              mutation.mutate(values, {
+                onSettled: () => {
+                  setSubmitting(false)
+                },
+                onSuccess: () => {
+                  resetForm()
+                },
+                onError: (error) => {
+                  setErrors({ general: error.message })
+                },
+              })
+            }}
           >
             {({ handleSubmit, handleChange, values, touched, errors }) => (
               <Form noValidate onSubmit={handleSubmit}>
@@ -102,6 +74,7 @@ const NewPost = () => {
                 <Button
                   type="submit"
                   className="mt-3 border-black bg-white text-black"
+                  disabled={mutation.isPending}
                 >
                   Add Post
                 </Button>

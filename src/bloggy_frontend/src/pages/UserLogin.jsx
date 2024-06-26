@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
 import {
   Container,
   Row,
@@ -9,25 +8,28 @@ import {
   Spinner,
   Alert,
 } from 'react-bootstrap'
-import { useAuth } from '../context/AuthContext'
+import { useConnectWallet } from '../hooks/useConnectWallet'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/typewriter.css'
+
 const UserLogin = () => {
-  const { artemisAdapter, isConnected, isConnecting, error, connectWallet } =
-    useAuth()
-  const navigate = useNavigate()
+  const mutation = useConnectWallet()
+  const [isPlugInstalled, setIsPlugInstalled] = useState(false)
 
   useEffect(() => {
-    if (isConnected) {
-      navigate('/posts')
+    const checkPlugInstalled = async () => {
+      const isInstalled = await window.ic?.plug?.isConnected()
+      setIsPlugInstalled(isInstalled)
     }
-  }, [isConnected, navigate])
+
+    checkPlugInstalled()
+  }, [])
 
   return (
     <>
-      <Container
+      <div
         className="d-flex align-items-center justify-content-center"
-        style={{ height: '100vh' }}
+        style={{ height: '100vh', background: 'url("https://images.unsplash.com/photo-1615716272085-d4bdd3b73207?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") no-repeat center center / cover' }}
       >
         <Row>
           <Col>
@@ -38,31 +40,47 @@ const UserLogin = () => {
               <Card.Body>
                 <Card.Title className="mb-4">Connect to your wallet</Card.Title>
                 <Card.Text className="mb-4">
-                  Connect your plug wallet to start creating and viewing posts.
+                  Connect your Plug wallet to start creating and viewing posts.
                 </Card.Text>
-                {error && <Alert variant="danger">{error}</Alert>}
-                {!isConnected ? (
-                  <Button
-                    variant="primary"
-                    onClick={connectWallet}
-                    disabled={isConnecting}
-                  >
-                    {isConnecting ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      'Connect'
-                    )}
-                  </Button>
+                {!isPlugInstalled ? (
+                  <Alert variant="warning">
+                    Plug wallet is not installed. Please install it from{' '}
+                    <a href="https://plugwallet.ooo/" target="_blank" rel="noopener noreferrer">
+                      here
+                    </a>
+                    .
+                  </Alert>
                 ) : (
-                  <Button variant="success" disabled>
-                    Connected
-                  </Button>
+                  <>
+                    {mutation.isError && (
+                      <Alert variant="danger">
+                        {mutation.error.message || 'Failed to connect to the wallet. Please try again.'}
+                      </Alert>
+                    )}
+                    {!mutation.isSuccess ? (
+                      <Button
+                        variant="primary"
+                        onClick={() => mutation.mutate()}
+                        disabled={mutation.isLoading}
+                      >
+                        {mutation.isLoading ? (
+                          <Spinner animation="border" size="sm" />
+                        ) : (
+                          'Connect'
+                        )}
+                      </Button>
+                    ) : (
+                      <Button variant="success" disabled>
+                        Connected
+                      </Button>
+                    )}
+                  </>
                 )}
               </Card.Body>
             </Card>
           </Col>
         </Row>
-      </Container>
+      </div>
     </>
   )
 }

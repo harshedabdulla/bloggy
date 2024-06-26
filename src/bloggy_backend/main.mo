@@ -1,18 +1,14 @@
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
-import Bool "mo:base/Bool";
 import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
-import Debug "mo:base/Debug";
 import Type "types";
-import validatePost "validate";
 import Validate "validate";
 
 
 actor bloggy {
-  
-  
+    
   type Result<A, B> = Result.Result<A, B>;
 
   var posts = Buffer.Buffer<Type.Post>(1);
@@ -48,6 +44,17 @@ actor bloggy {
   public query func viewPosts(): async [Type.Post] {
     return Buffer.toArray(posts);
   };
+
+  /// Function to view a single post by id
+  public query func viewPost(id: Nat): async Result<Type.Post, Text> {
+    for (post in Buffer.toArray(posts).vals()) {
+      if (post.id == id) {
+        return #ok(post);
+      };
+    };
+    return #err("Post not found");
+  };
+  
 
   /// function to delete all posts
   public shared func deletePosts() {

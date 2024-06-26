@@ -2,16 +2,18 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
+import QueryProvider from './context/QueryProvider'
 
-ReactDOM.render(
+createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-    <ToastContainer />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <QueryProvider>
+      <AuthProvider>
+        <App />
+        <ToastContainer />
+      </AuthProvider>
+    </QueryProvider>
+  </React.StrictMode>
 )
