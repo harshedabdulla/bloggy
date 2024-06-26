@@ -13,10 +13,11 @@ const connectWallet = async () => {
   setIsConnecting(true);
   setError(null);
   try {
-    if (typeof window.ic === 'undefined' || typeof window.ic.plug === 'undefined') {
-      setError('Plug Wallet is not installed. Please install the Plug Wallet extension.');
-      setIsConnecting(false);
-      return;
+    const plugWallet = artemis.wallets.filter(wallet => wallet.id === 'plug')[0];
+      if (!plugWallet || plugWallet.adapter.readyState === 'NotDetected') {
+        setError('Plug Wallet is not installed. Please install the Plug Wallet extension.');
+        setIsConnecting(false);
+        return;
     }
 
     const artemisWalletAdapter = new Artemis();

@@ -27,9 +27,9 @@ const UserLogin = () => {
 
   return (
     <>
-      <Container
+      <div
         className="d-flex align-items-center justify-content-center"
-        style={{ height: '100vh', background: 'url(/path/to/your/background.jpg) no-repeat center center / cover' }}
+        style={{ height: '100vh', background: 'url("https://images.unsplash.com/photo-1615716272085-d4bdd3b73207?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") no-repeat center center / cover' }}
       >
         <Row>
           <Col>
@@ -80,7 +80,7 @@ const UserLogin = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </div>
     </>
   )
 }
